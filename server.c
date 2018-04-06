@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 	int			nRead;
 	int 		result;
 	char		buffer[256];
-	char		missatge[] = "#(2)(0,23.3)(10,23.3)";
+	char		missatge[] = "";
 
 	/*Preparar l'adreça local*/
 	sockAddrSize=sizeof(struct sockaddr_in);
@@ -81,9 +81,57 @@ int main(int argc, char *argv[])
 
 		/*Rebre*/
 		result = read(newFd, buffer, 256);
+		
+			
 		printf("Missatge rebut del client(bytes %d): %s\n",	result, buffer);
+		
+		/************************ Initialisation Array **********************/
+	int tab[3600],i=0;
+	time_t t;
+	srand((unsigned) time(&t));
+	
+	for(i=0; i<3600; i++)
+		{
+		tab[i] = rand() % 30;
+		}
+		
+		/************************ Average**********************/
+	int average;
+	int count = 0;
+	int sum = 0;
+	for (i=0;i<3600; i++){
+		if (tab[i]!= NULL){
+			sum += tab[i];
+			count++;
+		}
+	}
+	average = sum/count;
+	
+	char average_c;
+	average_c = (char)average;
+
+		
+		char* mess = malloc(10*sizeof(char));
+		
+		if(strcmp(buffer,"minimum") == 0)
+			{mess = "10";}
+			else if(strcmp(buffer,"maximum") == 0)
+					{mess = "40";}
+					else if(strcmp(buffer,"average") == 0)
+									{mess = average_c;}
+									else if(strcmp(buffer,"reset") == 0)
+											{/*reset maxi et mini*/}
+											else if(strcmp(buffer,"counter") == 0)
+													{/*counter*/}
+													else if(strcmp(buffer,"start") == 0)
+															{/*start acqui*/}
+															else if(strcmp(buffer,"exit") == 0)
+																	{/* exit */}
+							
+
 
 		/*Enviar*/
+		strcpy(missatge,mess);
 		strcpy(buffer,missatge); //Copiar missatge a buffer
 		result = write(newFd, buffer, strlen(buffer)+1); //+1 per enviar el 0 final de cadena
 		printf("Missatge enviat a client(bytes %d): %s\n",	result, missatge);
@@ -92,6 +140,5 @@ int main(int argc, char *argv[])
 		result = close(newFd);
 	}
 }
-
 
 
