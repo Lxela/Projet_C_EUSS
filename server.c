@@ -44,35 +44,6 @@
 */
 
 
-int getMaximum(int *tab) {
-	int ret = 0;
-	int i;
-	for (i=0;i<3600; i++){
-		if (tab[i]!= NULL){
-			if (tab[i] > ret) {
-				printf("tab = %d\n", tab[i]);
-				ret = tab[i];
-			}
-		}
-	}
-
-	return ret;
-}
-
-int getMinimum( int *tab) {
-	int ret = 9999;
-	int i;
-	for (i=0;i<3600; i++){
-		if (tab[i]!= NULL){
-			if (tab[i] < ret) {
-				printf("tab = %d\n", tab[i]);
-				ret = tab[i];
-			}
-		}
-	}
-
-	return ret;
-}
 
 int main(int argc, char *argv[])
 {
@@ -85,8 +56,8 @@ int main(int argc, char *argv[])
 	int 		result;
 	char		buffer[256];
 	char		missatge[] = "";
-	int maximum = 0;
-	int minimum = 0;
+	int maximum = -9999;
+	int minimum = -9999;
 
 	/*Preparar l'adreça local*/
 	sockAddrSize=sizeof(struct sockaddr_in);
@@ -152,8 +123,10 @@ int main(int argc, char *argv[])
 			*buffer = '\0';
 			*missatge = '\0';
 
-			int maximum = getMinimum(tab);
-			printf("max = %d\n", minimum);
+			if (minimum == -9999) {
+				minimum = getMinimum(tab);
+			}			
+			printf("mini = %d\n", minimum);
 				
 			sprintf(mess, "%d", minimum);
 				
@@ -165,8 +138,10 @@ int main(int argc, char *argv[])
 			*buffer = '\0';
 			*missatge = '\0';
 
-			int maximum = getMaximum(tab);
-			printf("max = %d\n", maximum);
+			if (maximum == -9999) {
+				maximum = getMaximum(tab);
+			}			
+			printf("maxi = %d\n", maximum);
 				
 			sprintf(mess, "%d", maximum);
 				
@@ -179,15 +154,14 @@ int main(int argc, char *argv[])
 		}
 		else if(strcmp(buffer,"reset") == 0) {
 			/*reset maxi et mini*/
+			maximum = -9999;
+			minimum = -9999;
 		}
 		else if(strcmp(buffer,"counter") == 0) {
 			/*counter*/
 		}
 		else if(strcmp(buffer,"start") == 0) {
 			/*start acqui*/
-		}
-		else if(strcmp(buffer,"exit") == 0) {
-			/* exit */
 		}
 							
 
@@ -212,6 +186,38 @@ int main(int argc, char *argv[])
 		/*Tancar el socket fill*/
 		result = close(newFd);
 	}
+}
+
+
+
+
+
+int getMaximum(int *tab) {
+	int ret = -9999;
+	int i;
+	for (i=0;i<3600; i++){
+		if (tab[i]!= NULL){
+			if (tab[i] > ret) {
+				printf("tab = %d\n", tab[i]);
+				ret = tab[i];
+			}
+		}
+	}
+	return ret;
+}
+
+int getMinimum( int *tab) {
+	int ret = 9999;	
+	int i;
+	for (i=0;i<3600; i++){
+		if (tab[i]!= NULL){
+			if (tab[i] < ret) {
+				printf("tab = %d\n", tab[i]);
+				ret = tab[i];
+			}
+		}
+	}
+	return ret;
 }
 
 
