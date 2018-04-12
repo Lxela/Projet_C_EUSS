@@ -59,6 +59,21 @@ int getMaximum(int *tab) {
 	return ret;
 }
 
+int getMinimum( int *tab) {
+	int ret = 9999;
+	int i;
+	for (i=0;i<3600; i++){
+		if (tab[i]!= NULL){
+			if (tab[i] < ret) {
+				printf("tab = %d\n", tab[i]);
+				ret = tab[i];
+			}
+		}
+	}
+
+	return ret;
+}
+
 int main(int argc, char *argv[])
 {
 	struct sockaddr_in	serverAddr;
@@ -128,36 +143,52 @@ int main(int argc, char *argv[])
 	char average_c;
 	average_c = (char)average;
 
-	/////////////////////////////////////////fin average 
+	/******* fin average ************/
 
 
 		char* mess = malloc(10*sizeof(char));
 		
-		if(strcmp(buffer,"minimum") == 0)
-			{mess = "10";}
-			else if(strcmp(buffer,"maximum") == 0) {
-				*buffer = '\0';
-				*missatge = '\0';
+		if(strcmp(buffer,"minimum") == 0) {
+			*buffer = '\0';
+			*missatge = '\0';
 
-				int maximum = getMaximum(tab);
-				printf("max = %d\n", maximum);
+			int maximum = getMinimum(tab);
+			printf("max = %d\n", minimum);
 				
-				sprintf(mess, "%d", maximum);
+			sprintf(mess, "%d", minimum);
 				
-				printf("mess = %s\n", mess);
-				printf("buffer = %s\n\n", buffer);
-				printf("missaje = %s\n\n", missatge);
-			}
-					else if(strcmp(buffer,"average") == 0)
-									{mess = average_c;}
-									else if(strcmp(buffer,"reset") == 0)
-											{/*reset maxi et mini*/}
-											else if(strcmp(buffer,"counter") == 0)
-													{/*counter*/}
-													else if(strcmp(buffer,"start") == 0)
-															{/*start acqui*/}
-															else if(strcmp(buffer,"exit") == 0)
-																	{/* exit */}
+			printf("mess = %s\n", mess);
+			printf("buffer = %s\n\n", buffer);
+			printf("missaje = %s\n\n", missatge);
+		}
+		else if(strcmp(buffer,"maximum") == 0) {
+			*buffer = '\0';
+			*missatge = '\0';
+
+			int maximum = getMaximum(tab);
+			printf("max = %d\n", maximum);
+				
+			sprintf(mess, "%d", maximum);
+				
+			printf("mess = %s\n", mess);
+			printf("buffer = %s\n\n", buffer);
+			printf("missaje = %s\n\n", missatge);
+		}
+		else if(strcmp(buffer,"average") == 0) {
+			mess = average_c;
+		}
+		else if(strcmp(buffer,"reset") == 0) {
+			/*reset maxi et mini*/
+		}
+		else if(strcmp(buffer,"counter") == 0) {
+			/*counter*/
+		}
+		else if(strcmp(buffer,"start") == 0) {
+			/*start acqui*/
+		}
+		else if(strcmp(buffer,"exit") == 0) {
+			/* exit */
+		}
 							
 
 
