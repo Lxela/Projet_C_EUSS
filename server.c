@@ -56,6 +56,8 @@ int main(int argc, char *argv[])
 	int 		result;
 	char		buffer[256];
 	char		missatge[] = "";
+	//int tab[3600];
+	int counter = 0;
 	int maximum = -9999;
 	int minimum = -9999;
 
@@ -97,7 +99,6 @@ int main(int argc, char *argv[])
 	for(i=0; i<3600; i++){
 		tab[i] = rand() % 30;
 	}
-
 	/********* HANDLE THE DATAS **************/
 
 		char* mess = malloc(10*sizeof(char));
@@ -155,9 +156,19 @@ int main(int argc, char *argv[])
 		}
 		else if(strcmp(buffer,"counter") == 0) {
 			/*counter*/
+			*buffer = '\0';
+			*missatge = '\0';
+
+			printf("counter = %d\n", counter);	
+			sprintf(mess, "%d", counter);
+				
+			printf("mess = %s\n", mess);
+			printf("buffer = %s\n\n", buffer);
+			printf("missaje = %s\n\n", missatge);
 		}
 		else if(strcmp(buffer,"start") == 0) {
 			/*start acqui*/
+			//tab = acquisition(&counter);
 		}
 							
 
@@ -165,20 +176,20 @@ int main(int argc, char *argv[])
 		/*Enviar*/
 		
 		strcpy(missatge,mess);
-		printf("missaje 1 = %s\n\n", missatge);
-		printf("buffer 1 = %s\n\n", buffer);
+		//printf("missaje 1 = %s\n\n", missatge);
+		//printf("buffer 1 = %s\n\n", buffer);
 		strcpy(buffer,missatge); //Copiar missatge a buffer
-		printf("missaje 2 = %s\n\n", missatge);
-		printf("buffer 2 = %s\n\n", buffer);
+		//printf("missaje 2 = %s\n\n", missatge);
+		//printf("buffer 2 = %s\n\n", buffer);
 		result = write(newFd, buffer, strlen(buffer)+1); //+1 per enviar el 0 final de cadena
-		printf("retest\n");
+		//printf("retest\n");
 
 		
 		printf("Missatge enviat a client(bytes %d): %s\n\n",	result, missatge);
 		
-		printf("after\n");
+		//printf("after\n");
 
-		printf("after missaje = %s\n", missatge);
+		//printf("after missaje = %s\n", missatge);
 		/*Tancar el socket fill*/
 		result = close(newFd);
 	}
@@ -186,7 +197,16 @@ int main(int argc, char *argv[])
 
 
 
-
+acquisition(int *counter) {
+	int tab[3600],i=0;
+	time_t t;
+	srand((unsigned) time(&t));
+	
+	for(i=0; i<3600; i++){
+		tab[i] = rand() % 30;
+		counter++;
+	}
+}
 
 int getMaximum(int *tab) {
 	int ret = -9999;
@@ -231,9 +251,6 @@ int getAverage(int *tab) {
 	}
 	ret = sum/count;
 	printf("average = %d\n", ret);
-	
-	//char average_c;
-	//average_c = (char)average;
 	
 	return ret;
 }
