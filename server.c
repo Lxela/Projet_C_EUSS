@@ -43,6 +43,22 @@
 *
 */
 
+
+int getMaximum(int *tab) {
+	int ret = 0;
+	int i;
+	for (i=0;i<3600; i++){
+		if (tab[i]!= NULL){
+			if (tab[i] > ret) {
+				printf("tab = %d\n", tab[i]);
+				ret = tab[i];
+			}
+		}
+	}
+
+	return ret;
+}
+
 int main(int argc, char *argv[])
 {
 	struct sockaddr_in	serverAddr;
@@ -54,6 +70,8 @@ int main(int argc, char *argv[])
 	int 		result;
 	char		buffer[256];
 	char		missatge[] = "";
+	int maximum = 0;
+	int minimum = 0;
 
 	/*Preparar l'adreça local*/
 	sockAddrSize=sizeof(struct sockaddr_in);
@@ -110,13 +128,26 @@ int main(int argc, char *argv[])
 	char average_c;
 	average_c = (char)average;
 
-		
+	/////////////////////////////////////////fin average 
+
+
 		char* mess = malloc(10*sizeof(char));
 		
 		if(strcmp(buffer,"minimum") == 0)
 			{mess = "10";}
-			else if(strcmp(buffer,"maximum") == 0)
-					{mess = "40";}
+			else if(strcmp(buffer,"maximum") == 0) {
+				*buffer = '\0';
+				*missatge = '\0';
+
+				int maximum = getMaximum(tab);
+				printf("max = %d\n", maximum);
+				
+				sprintf(mess, "%d", maximum);
+				
+				printf("mess = %s\n", mess);
+				printf("buffer = %s\n\n", buffer);
+				printf("missaje = %s\n\n", missatge);
+			}
 					else if(strcmp(buffer,"average") == 0)
 									{mess = average_c;}
 									else if(strcmp(buffer,"reset") == 0)
@@ -131,11 +162,22 @@ int main(int argc, char *argv[])
 
 
 		/*Enviar*/
+		
 		strcpy(missatge,mess);
+		printf("missaje 1 = %s\n\n", missatge);
+		printf("buffer 1 = %s\n\n", buffer);
 		strcpy(buffer,missatge); //Copiar missatge a buffer
+		printf("missaje 2 = %s\n\n", missatge);
+		printf("buffer 2 = %s\n\n", buffer);
 		result = write(newFd, buffer, strlen(buffer)+1); //+1 per enviar el 0 final de cadena
-		printf("Missatge enviat a client(bytes %d): %s\n",	result, missatge);
+		printf("retest\n");
 
+		
+		printf("Missatge enviat a client(bytes %d): %s\n\n",	result, missatge);
+		
+		printf("after\n");
+
+		printf("after missaje = %s\n", missatge);
 		/*Tancar el socket fill*/
 		result = close(newFd);
 	}
