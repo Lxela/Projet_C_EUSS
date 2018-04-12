@@ -94,28 +94,11 @@ int main(int argc, char *argv[])
 	time_t t;
 	srand((unsigned) time(&t));
 	
-	for(i=0; i<3600; i++)
-		{
+	for(i=0; i<3600; i++){
 		tab[i] = rand() % 30;
-		}
-		
-		/************************ Average**********************/
-	int average;
-	int count = 0;
-	int sum = 0;
-	for (i=0;i<3600; i++){
-		if (tab[i]!= NULL){
-			sum += tab[i];
-			count++;
-		}
 	}
-	average = sum/count;
-	
-	char average_c;
-	average_c = (char)average;
 
-	/******* fin average ************/
-
+	/********* HANDLE THE DATAS **************/
 
 		char* mess = malloc(10*sizeof(char));
 		
@@ -150,7 +133,20 @@ int main(int argc, char *argv[])
 			printf("missaje = %s\n\n", missatge);
 		}
 		else if(strcmp(buffer,"average") == 0) {
-			mess = average_c;
+			*buffer = '\0';
+			*missatge = '\0';
+
+			int avg = getAverage(tab);
+			
+			printf("avg = %d\n", avg);
+				
+			sprintf(mess, "%d", avg);
+				
+			printf("mess = %s\n", mess);
+			printf("buffer = %s\n\n", buffer);
+			printf("missaje = %s\n\n", missatge);			
+
+
 		}
 		else if(strcmp(buffer,"reset") == 0) {
 			/*reset maxi et mini*/
@@ -217,6 +213,28 @@ int getMinimum( int *tab) {
 			}
 		}
 	}
+	return ret;
+}
+
+
+int getAverage(int *tab) {
+	int ret;
+	int count = 0;
+	int sum = 0;
+	int i;
+	
+	for (i=0;i<3600; i++){
+		if (tab[i]!= NULL){
+			sum += tab[i];
+			count++;
+		}
+	}
+	ret = sum/count;
+	printf("average = %d\n", ret);
+	
+	//char average_c;
+	//average_c = (char)average;
+	
 	return ret;
 }
 
