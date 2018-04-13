@@ -79,17 +79,17 @@ int main(int argc, char *argv[])
 	
 	/*Bucle s'acceptació de connexions*/
 	while(1){
-		printf("\nServidor esperant connexions\n");
+		printf("\nServer waiting for connections\n");
 
 		/*Esperar conexió. sFd: socket pare, newFd: socket fill*/
 		newFd=accept(sFd, (struct sockaddr *) &clientAddr, &sockAddrSize);
-		printf("Connexión acceptada del client: adreça %s, port %d\n",	inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
+		printf("Connection with the client accepted: address %s, port %d\n",	inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
 		/*Rebre*/
 		result = read(newFd, buffer, 256);
 		
 			
-		printf("Missatge rebut del client(bytes %d): %s\n",	result, buffer);
+		printf("Message received from the client (bytes %d): %s\n",	result, buffer);
 		
 		/************************ Initialisation Array **********************/
 	int tab[3600],i=0;
@@ -104,50 +104,36 @@ int main(int argc, char *argv[])
 		char* mess = malloc(10*sizeof(char));
 		
 		if(strcmp(buffer,"minimum") == 0) {
-			*buffer = '\0';
-			*missatge = '\0';
+			memset(buffer, '\0', sizeof(buffer));
+			memset(missatge, '\0', sizeof(missatge));
 
 			if (minimum == -9999) {
 				minimum = getMinimum(tab);
 			}			
 			printf("mini = %d\n", minimum);
-				
 			sprintf(mess, "%d", minimum);
-				
 			printf("mess = %s\n", mess);
-			printf("buffer = %s\n\n", buffer);
-			printf("missaje = %s\n\n", missatge);
 		}
 		else if(strcmp(buffer,"maximum") == 0) {
-			*buffer = '\0';
-			*missatge = '\0';
+			memset(buffer, '\0', sizeof(buffer));
+			memset(missatge, '\0', sizeof(missatge));
 
 			if (maximum == -9999) {
 				maximum = getMaximum(tab);
 			}			
 			printf("maxi = %d\n", maximum);
-				
 			sprintf(mess, "%d", maximum);
-				
 			printf("mess = %s\n", mess);
-			printf("buffer = %s\n\n", buffer);
-			printf("missaje = %s\n\n", missatge);
 		}
 		else if(strcmp(buffer,"average") == 0) {
-			*buffer = '\0';
-			*missatge = '\0';
+			memset(buffer, '\0', sizeof(buffer));
+			memset(missatge, '\0', sizeof(missatge));
 
 			int avg = getAverage(tab);
 			
 			printf("avg = %d\n", avg);
-				
 			sprintf(mess, "%d", avg);
-				
-			printf("mess = %s\n", mess);
-			printf("buffer = %s\n\n", buffer);
-			printf("missaje = %s\n\n", missatge);			
-
-
+			printf("mess = %s\n", mess);			
 		}
 		else if(strcmp(buffer,"reset") == 0) {
 			/*reset maxi et mini*/
@@ -156,15 +142,13 @@ int main(int argc, char *argv[])
 		}
 		else if(strcmp(buffer,"counter") == 0) {
 			/*counter*/
-			*buffer = '\0';
-			*missatge = '\0';
+			memset(buffer, '\0', sizeof(buffer));
+			memset(missatge, '\0', sizeof(missatge));
 
 			printf("counter = %d\n", counter);	
 			sprintf(mess, "%d", counter);
 				
 			printf("mess = %s\n", mess);
-			printf("buffer = %s\n\n", buffer);
-			printf("missaje = %s\n\n", missatge);
 		}
 		else if(strcmp(buffer,"start") == 0) {
 			/*start acqui*/
@@ -176,20 +160,17 @@ int main(int argc, char *argv[])
 		/*Enviar*/
 		
 		strcpy(missatge,mess);
-		//printf("missaje 1 = %s\n\n", missatge);
-		//printf("buffer 1 = %s\n\n", buffer);
-		strcpy(buffer,missatge); //Copiar missatge a buffer
-		//printf("missaje 2 = %s\n\n", missatge);
-		//printf("buffer 2 = %s\n\n", buffer);
+		printf("missaje 1 = %s\n\n", missatge);
+		printf("buffer 1 = %s\n\n", buffer);
+		//memset(buffer, '\0', sizeof(buffer));
+		printf("buffer 2 = %s\n\n", buffer);
+		//strcpy(buffer,missatge); //Copiar missatge a buffer
+		*buffer = *missatge;
+		printf("buffer 3 = %s\n\n", buffer);
 		result = write(newFd, buffer, strlen(buffer)+1); //+1 per enviar el 0 final de cadena
-		//printf("retest\n");
-
 		
-		printf("Missatge enviat a client(bytes %d): %s\n\n",	result, missatge);
+		printf("Message sent to the client (bytes %d): %s\n\n",	result, missatge);
 		
-		//printf("after\n");
-
-		//printf("after missaje = %s\n", missatge);
 		/*Tancar el socket fill*/
 		result = close(newFd);
 	}
@@ -214,7 +195,7 @@ int getMaximum(int *tab) {
 	for (i=0;i<3600; i++){
 		if (tab[i]!= NULL){
 			if (tab[i] > ret) {
-				printf("tab = %d\n", tab[i]);
+				//printf("tab = %d\n", tab[i]);
 				ret = tab[i];
 			}
 		}
@@ -228,7 +209,7 @@ int getMinimum( int *tab) {
 	for (i=0;i<3600; i++){
 		if (tab[i]!= NULL){
 			if (tab[i] < ret) {
-				printf("tab = %d\n", tab[i]);
+				//printf("tab = %d\n", tab[i]);
 				ret = tab[i];
 			}
 		}
