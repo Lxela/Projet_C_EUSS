@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 	int tab[3600],i=0;
 	time_t t;
 	srand((unsigned) time(&t));
-	
+	counter = 0;
 	for(i=0; i<3600; i++){
 		tab[i] = rand() % 30;
 		counter++;
