@@ -55,11 +55,12 @@ int main(int argc, char *argv[])
 	int			nRead;
 	int 		result;
 	char		buffer[256];
-	char		missatge[] = "";
+	char		missatge[256];
 	//int tab[3600];
 	int counter = 0;
 	int maximum = -9999;
 	int minimum = -9999;
+	char acquisition[10] = "stop";
 
 	/*Preparar l'adreça local*/
 	sockAddrSize=sizeof(struct sockaddr_in);
@@ -98,6 +99,7 @@ int main(int argc, char *argv[])
 	
 	for(i=0; i<3600; i++){
 		tab[i] = rand() % 30;
+		counter++;
 	}
 	/********* HANDLE THE DATAS **************/
 
@@ -144,6 +146,7 @@ int main(int argc, char *argv[])
 			/*counter*/
 			memset(buffer, '\0', sizeof(buffer));
 			memset(missatge, '\0', sizeof(missatge));
+			//counter = strlen(tab);
 
 			printf("counter = %d\n", counter);	
 			sprintf(mess, "%d", counter);
@@ -153,6 +156,19 @@ int main(int argc, char *argv[])
 		else if(strcmp(buffer,"start") == 0) {
 			/*start acqui*/
 			//tab = acquisition(&counter);
+			printf("acquisition = %s\n", acquisition);
+
+			if (strcmp(acquisition,"stop") == 0) {
+				strcpy(mess,"start");
+				strcpy(acquisition,"start");
+				printf("mess = %s\n", mess);
+			}
+			else {
+				strcpy(mess,"stop");
+				strcpy(acquisition,"stop");
+				printf("mess = %s\n", mess);
+			}
+			printf("acquisition = %s\n", acquisition);
 		}
 							
 
@@ -160,13 +176,8 @@ int main(int argc, char *argv[])
 		/*Enviar*/
 		
 		strcpy(missatge,mess);
-		printf("missaje 1 = %s\n\n", missatge);
-		printf("buffer 1 = %s\n\n", buffer);
-		//memset(buffer, '\0', sizeof(buffer));
-		printf("buffer 2 = %s\n\n", buffer);
-		//strcpy(buffer,missatge); //Copiar missatge a buffer
-		*buffer = *missatge;
-		printf("buffer 3 = %s\n\n", buffer);
+		memset(buffer, '\0', 256);
+		strcpy(buffer,missatge); //Copiar missatge a buffer
 		result = write(newFd, buffer, strlen(buffer)+1); //+1 per enviar el 0 final de cadena
 		
 		printf("Message sent to the client (bytes %d): %s\n\n",	result, missatge);
