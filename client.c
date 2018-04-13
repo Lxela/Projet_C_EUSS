@@ -68,7 +68,7 @@ void connection_server(char *message) {
 
 	/*Enviar*/
 	strcpy(buffer,missatge); //Copiar missatge a buffer
-	result = write(sFd, buffer, strlen(buffer));
+	result = write(sFd, buffer, strlen(buffer)+1);
 	printf("Message sent to the server(bytes %d): %s\n", result, missatge);
 
 	/*Rebre*/
@@ -93,9 +93,17 @@ int main(int argc, char **argv)
 
 	ImprimirMenu();                             
 	input = getchar();
+	char* acqu_state = malloc(10*sizeof(char));
+	acqu_state = "stop"; //initialisation
+	
+	char* tiempo = malloc(10*sizeof(char));
+	
+	char* n_avg = malloc(10*sizeof(char));
 
+	
 	while (input != 's')
 	{
+		char message[50]=""; 
 		switch (input)
 		{
 			case '1':
@@ -125,7 +133,32 @@ int main(int argc, char **argv)
 				break;
 			case '6':
 				printf("menu 6\n");
-				connection_server("start");	
+				if(strcmp(acqu_state,"stop") == 0)
+					{printf("\nEnter time between each acquisition (seconds) : ");
+					scanf("%s",tiempo);
+					printf("\nEnter the number of data to calculate the average : ");
+					scanf("%s",n_avg);
+					
+					printf("0: %s\n",message);
+					strcat(message,tiempo);
+					printf("1: %s\n",message);
+					strcat(message,"/");
+					strcat(message,n_avg);
+					printf("2: %s\n",message);
+					strcat(message,"/1");
+					printf("3: %s\n",message);
+					
+					acqu_state = "start";
+					
+					}
+					else
+						{acqu_state = "stop";
+						strcat(message,"00");
+						strcat(message,"/");
+						strcat(message,"0");
+						strcat(message,"/0");}
+						
+				connection_server(message);
 				ImprimirMenu();                             
 				break;
 			case 0x0a:
@@ -143,6 +176,3 @@ int main(int argc, char **argv)
 	
 	return 0;
 }
-
-
-

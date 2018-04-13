@@ -104,7 +104,10 @@ int main(int argc, char *argv[])
 	/********* HANDLE THE DATAS **************/
 
 		char* mess = malloc(10*sizeof(char));
+		char* acqu_state = malloc(10*sizeof(char));
+		acqu_state = "stop"; //initialisation
 		
+		//to get the minimum temperature
 		if(strcmp(buffer,"minimum") == 0) {
 			memset(buffer, '\0', sizeof(buffer));
 			memset(missatge, '\0', sizeof(missatge));
@@ -116,6 +119,7 @@ int main(int argc, char *argv[])
 			sprintf(mess, "%d", minimum);
 			printf("mess = %s\n", mess);
 		}
+		//to get the maximum temperature
 		else if(strcmp(buffer,"maximum") == 0) {
 			memset(buffer, '\0', sizeof(buffer));
 			memset(missatge, '\0', sizeof(missatge));
@@ -127,6 +131,7 @@ int main(int argc, char *argv[])
 			sprintf(mess, "%d", maximum);
 			printf("mess = %s\n", mess);
 		}
+		//to get the average temperature
 		else if(strcmp(buffer,"average") == 0) {
 			memset(buffer, '\0', sizeof(buffer));
 			memset(missatge, '\0', sizeof(missatge));
@@ -137,11 +142,13 @@ int main(int argc, char *argv[])
 			sprintf(mess, "%d", avg);
 			printf("mess = %s\n", mess);			
 		}
+		//to reset the max and mini temperature
 		else if(strcmp(buffer,"reset") == 0) {
 			/*reset maxi et mini*/
 			maximum = -9999;
 			minimum = -9999;
 		}
+		//to get the number of temperature in the array
 		else if(strcmp(buffer,"counter") == 0) {
 			/*counter*/
 			memset(buffer, '\0', sizeof(buffer));
@@ -153,16 +160,36 @@ int main(int argc, char *argv[])
 				
 			printf("mess = %s\n", mess);
 		}
-		else if(strcmp(buffer,"start") == 0) {
+		//to start or stop the acquisition of temperature
+		else {
 			/*start acqui*/
 			//tab = acquisition(&counter);
+			
+			//to get the differents datas from the message
+			char subbuf[10];
+			memcpy(subbuf, &buffer, 2);
+			subbuf[2] = '\0';
+			
+			char subbuf2[10];
+			memcpy(subbuf2, &buffer[3], 1);
+			subbuf2[1] = '\0';
+			
+			char subbuf3[10];
+			memcpy(subbuf3, &buffer[5],1);
+			subbuf3[1] = '\0';
+			
+			
 			printf("acquisition = %s\n", acquisition);
 
-			if (strcmp(acquisition,"stop") == 0) {
+			//to start the acquisition of the temperature
+			if (strcmp(subbuf3,"1") == 0) {
+				printf("\nAcquisition started witch %s seconds of interval.\n",subbuf);
+				printf("We calculate median with %s data\n\n. ",subbuf2);
 				strcpy(mess,"start");
 				strcpy(acquisition,"start");
 				printf("mess = %s\n", mess);
 			}
+			//stop the acquisition of the temperature
 			else {
 				strcpy(mess,"stop");
 				strcpy(acquisition,"stop");
@@ -188,7 +215,7 @@ int main(int argc, char *argv[])
 }
 
 
-
+//function not used for the moment
 acquisition(int *counter) {
 	int tab[3600],i=0;
 	time_t t;
@@ -200,13 +227,13 @@ acquisition(int *counter) {
 	}
 }
 
+//function to get the maximum
 int getMaximum(int *tab) {
 	int ret = -9999;
 	int i;
 	for (i=0;i<3600; i++){
 		if (tab[i]!= NULL){
 			if (tab[i] > ret) {
-				//printf("tab = %d\n", tab[i]);
 				ret = tab[i];
 			}
 		}
@@ -214,13 +241,13 @@ int getMaximum(int *tab) {
 	return ret;
 }
 
+//function to get the minimum
 int getMinimum( int *tab) {
 	int ret = 9999;	
 	int i;
 	for (i=0;i<3600; i++){
 		if (tab[i]!= NULL){
 			if (tab[i] < ret) {
-				//printf("tab = %d\n", tab[i]);
 				ret = tab[i];
 			}
 		}
@@ -228,7 +255,7 @@ int getMinimum( int *tab) {
 	return ret;
 }
 
-
+//to get the average of the temperature
 int getAverage(int *tab) {
 	int ret;
 	int count = 0;
@@ -246,5 +273,89 @@ int getAverage(int *tab) {
 	
 	return ret;
 }
+
+
+//to analyse the message with the protocol, not used yet, misunderstood from the first task
+void analyse_msg(char *msg, char *answer) {
+	char order = msg[1];
+	int n1, n2, n3, verif;
+
+	switch(order) {
+		case 'S':
+			strcat(answer,"S");
+			n1 = msg[2]-'0';
+			n2 = msg[3]-'0';
+			n3 = msg[4]-'0';
+			
+			if(n1 <= 9 && n1 >= 0) {
+				if(n2 <= 9 && n2 >= 0) {
+					if (n3 == 0 || n3 == 1) {
+						verif = 0;
+					}else {	verif = 1; }
+						if (strlen(msg) == 6){
+							verif = 0;
+						}else { verif = 1;}
+				}else { verif = 1;}
+			}else {	verif = 1; }
+			
+			
+			
+			if(verif == 1) {
+				strcat(answer,"1");
+			}else {strcat(answer,"0");}
+			break;
+		case 'E':
+			strcat(answer,"E");
+			n1 = msg[2]-'0';
+			n2 = msg[3]-'0';
+
+			
+			if(n1 <= 9 && n1 >= 0) {
+				if(n2 <= 9 && n2 >= 0) {
+					if (strlen(msg) == 5){
+						verif = 0;
+					}else { verif = 1;}
+				}else { verif = 1;}
+			}else {	verif = 1; }
+
+			if(verif == 1) {
+				strcat(answer,"1");
+			}else {strcat(answer,"0");}
+
+			strcat(answer,"0");
+			
+			break;
+		case 'C':
+			strcat(answer,"C");
+			if (strlen(msg) == 3) {
+				strcat(answer,"0");
+				strcat(answer,"0101");
+			}else { 
+				strcat(answer,"1"); 
+				strcat(answer,"0101");
+			}
+
+			break;
+		case 'M':
+			strcat(answer,"M");
+			if(strlen(msg) == 4) {
+				if((msg[2]-'0') == 0 || (msg[2]-'0') == 1) {
+					verif = 0;
+				}
+				else {verif = 1;}
+			}else {verif = 1; }
+			
+			if (verif == 0) {
+				strcat(answer,"0");
+			}else { strcat(answer,"1");}
+
+			break;
+		default:
+			printf("invalid order\n");
+			strcat(answer,"2");
+	}
+	strcat(answer,"Z");
+}
+
 
 
