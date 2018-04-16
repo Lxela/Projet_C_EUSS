@@ -106,31 +106,37 @@ int main(int argc, char **argv)
 		char message[50]=""; 
 		switch (input)
 		{
+			//ask for the minimum			
 			case '1':
 				printf("menu 1\n");
-				connection_server("minimum");	
+				connection_server("AYZ");	
 				ImprimirMenu();                             
 				break;
+			//ask for the maximum			
 			case '2':
 				printf("menu 2\n");
-				connection_server("maximum");	
+				connection_server("AXZ");	
 				ImprimirMenu();                             
 				break;
+			//ask for the average
 			case '3':
 				printf("menu 3\n");
-				connection_server("average");	
+				connection_server("AUZ");	
 				ImprimirMenu();                             
 				break;
+			//ask for the reset			
 			case '4':
 				printf("menu 4\n");
-				connection_server("reset");	
+				connection_server("ARZ");	
 				ImprimirMenu();                             
 				break;
+			//ask for the counter			
 			case '5':
 				printf("menu 5\n");
-				connection_server("counter");	
+				connection_server("ABZ");	
 				ImprimirMenu();                             
 				break;
+			//start / stop the acquisition
 			case '6':
 				printf("menu 6\n");
 				if(strcmp(acqu_state,"stop") == 0)
@@ -139,24 +145,19 @@ int main(int argc, char **argv)
 					printf("\nEnter the number of data to calculate the average : ");
 					scanf("%s",n_avg);
 					
-					printf("0: %s\n",message);
+					strcat(message,"AM1");
 					strcat(message,tiempo);
-					printf("1: %s\n",message);
-					strcat(message,"/");
 					strcat(message,n_avg);
-					printf("2: %s\n",message);
-					strcat(message,"/1");
+					strcat(message,"Z");
 					printf("3: %s\n",message);
 					
 					acqu_state = "start";
 					
 					}
-					else
-						{acqu_state = "stop";
-						strcat(message,"00");
-						strcat(message,"/");
-						strcat(message,"0");
-						strcat(message,"/0");}
+					else {
+						acqu_state = "stop";
+						strcat(message,"AM0999Z");
+					}
 						
 				connection_server(message);
 				ImprimirMenu();                             
