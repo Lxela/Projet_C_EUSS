@@ -58,8 +58,8 @@ int main(int argc, char *argv[])
 	char		missatge[256];
 	//int tab[3600];
 	int counter = 0;
-	int maximum = -9999;
-	int minimum = -9999;
+	float maximum = -9999.0;
+	float minimum = -9999.0;
 	char acquisition[10] = "stop";
 
 	/*Preparar l'adreça local*/
@@ -93,110 +93,133 @@ int main(int argc, char *argv[])
 		printf("Message received from the client (bytes %d): %s\n",	result, buffer);
 		
 		/************************ Initialisation Array **********************/
-	int tab[3600],i=0;
+	float tab[3600];
+	int i=0;
 	time_t t;
 	srand((unsigned) time(&t));
 	counter = 0;
 	for(i=0; i<3600; i++){
-		tab[i] = rand() % 30;
+		//tab[i] = (float)rand() / 30.0;
+		tab[i] = ((float) rand()) / (float) 30;		
 		counter++;
 	}
 	/********* HANDLE THE DATAS **************/
 
-		char* mess = malloc(10*sizeof(char));
-		char* acqu_state = malloc(10*sizeof(char));
-		acqu_state = "stop"; //initialisation
+	char* mess = malloc(10*sizeof(char));
+	char* acqu_state = malloc(10*sizeof(char));
+	acqu_state = "stop"; //initialisation
 		
-		//to get the minimum temperature
-		if(strcmp(buffer,"minimum") == 0) {
+	char order = buffer[1];
+	//int n1, n2, n3, verif;
+	char val[4];
+	char subbuf[10];
+	char subbuf2[10];
+	char subbuf3[10];
+
+	switch(order) {
+		case 'U':
 			memset(buffer, '\0', sizeof(buffer));
 			memset(missatge, '\0', sizeof(missatge));
-
-			if (minimum == -9999) {
-				minimum = getMinimum(tab);
-			}			
-			printf("mini = %d\n", minimum);
-			sprintf(mess, "%d", minimum);
-			printf("mess = %s\n", mess);
-		}
-		//to get the maximum temperature
-		else if(strcmp(buffer,"maximum") == 0) {
-			memset(buffer, '\0', sizeof(buffer));
-			memset(missatge, '\0', sizeof(missatge));
-
-			if (maximum == -9999) {
-				maximum = getMaximum(tab);
-			}			
-			printf("maxi = %d\n", maximum);
-			sprintf(mess, "%d", maximum);
-			printf("mess = %s\n", mess);
-		}
-		//to get the average temperature
-		else if(strcmp(buffer,"average") == 0) {
-			memset(buffer, '\0', sizeof(buffer));
-			memset(missatge, '\0', sizeof(missatge));
-
-			int avg = getAverage(tab);
 			
-			printf("avg = %d\n", avg);
-			sprintf(mess, "%d", avg);
-			printf("mess = %s\n", mess);			
-		}
-		//to reset the max and mini temperature
-		else if(strcmp(buffer,"reset") == 0) {
+			
+			float avg = getAverage(tab);
+			
+			printf("avg = %f\n", avg);
+			sprintf(val, "%f", avg);
+			strcpy(mess, "AU0");
+			strcat(mess, val);
+			strcat(mess, "Z");
+			printf("mess = %s\n", mess);	
+			break;
+		case 'X':
+
+			memset(buffer, '\0', sizeof(buffer));
+			memset(missatge, '\0', sizeof(missatge));
+
+			if (maximum == -9999.0) {
+				maximum = getMaximum(tab);
+			}
+			strcpy(mess, "AX0");			
+			printf("mini = %f\n", maximum);
+			sprintf(val, "%f", maximum);
+			strcat(mess, val);
+			strcat(mess, "Z");
+			printf("mess = %s\n", mess);
+			break;
+		case 'Y':
+
+			memset(buffer, '\0', sizeof(buffer));
+			memset(missatge, '\0', sizeof(missatge));
+
+			if (minimum == -9999.0) {
+				minimum = getMinimum(tab);
+			}
+			strcpy(mess, "AY0");			
+			printf("mini = %f\n", minimum);
+			sprintf(val, "%f", minimum);
+			strcat(mess, val);
+			strcat(mess, "Z");
+			printf("mess = %s\n", mess);
+			break;
+		case 'R':
 			/*reset maxi et mini*/
-			maximum = -9999;
-			minimum = -9999;
-		}
-		//to get the number of temperature in the array
-		else if(strcmp(buffer,"counter") == 0) {
+			maximum = -9999.0;
+			minimum = -9999.0;
+			strcpy(mess, "AR0Z");
+			break;
+		case 'B':
+
 			/*counter*/
 			memset(buffer, '\0', sizeof(buffer));
 			memset(missatge, '\0', sizeof(missatge));
-			//counter = strlen(tab);
 
 			printf("counter = %d\n", counter);	
-			sprintf(mess, "%d", counter);
-				
+			sprintf(val, "%d", counter);
+			
+			strcpy(mess, "AB0");
+			strcat(mess, val);
+			strcat(mess, "Z");	
 			printf("mess = %s\n", mess);
-		}
-		//to start or stop the acquisition of temperature
-		else {
+			break;
+		case 'M':
 			/*start acqui*/
-			//tab = acquisition(&counter);
 			
 			//to get the differents datas from the message
-			char subbuf[10];
-			memcpy(subbuf, &buffer, 2);
+			
+			memcpy(subbuf, &buffer[2], 1);
 			subbuf[2] = '\0';
 			
-			char subbuf2[10];
-			memcpy(subbuf2, &buffer[3], 1);
-			subbuf2[1] = '\0';
 			
-			char subbuf3[10];
-			memcpy(subbuf3, &buffer[5],1);
+			memcpy(subbuf2, &buffer[3], 2);
+			subbuf2[2] = '\0';
+			
+			
+			memcpy(subbuf3, &buffer[5],2);
 			subbuf3[1] = '\0';
 			
 			
 			printf("acquisition = %s\n", acquisition);
 
 			//to start the acquisition of the temperature
-			if (strcmp(subbuf3,"1") == 0) {
-				printf("\nAcquisition started witch %s seconds of interval.\n",subbuf);
+			if (strcmp(subbuf,"1") == 0) {
+				printf("\nAcquisition started witch %s seconds of interval.\n",subbuf2);
 				printf("We calculate median with %s data\n\n. ",subbuf2);
-				strcpy(mess,"start");
+				strcpy(mess,"AM0Z");
 				strcpy(acquisition,"start");
 				printf("mess = %s\n", mess);
 			}
 			//stop the acquisition of the temperature
 			else {
-				strcpy(mess,"stop");
+				strcpy(mess,"AM0Z");
 				strcpy(acquisition,"stop");
 				printf("mess = %s\n", mess);
 			}
 			printf("acquisition = %s\n", acquisition);
-		}
+			break;
+		default:
+			printf("invalid order\n");
+			strcpy(mess,"erreuuuur");
+	}
 							
 
 
@@ -228,12 +251,12 @@ acquisition(int *counter) {
 }
 
 //function to get the maximum
-int getMaximum(int *tab) {
-	int ret = -9999;
+float getMaximum(float *tab) {
+	float ret = -9999.0;
 	int i;
 	for (i=0;i<3600; i++){
 		if (tab[i]!= NULL){
-			if (tab[i] > ret) {
+			if (tab[i] > ret) { 
 				ret = tab[i];
 			}
 		}
@@ -242,8 +265,8 @@ int getMaximum(int *tab) {
 }
 
 //function to get the minimum
-int getMinimum( int *tab) {
-	int ret = 9999;	
+float getMinimum( float *tab) {
+	float ret = 9999.0;	
 	int i;
 	for (i=0;i<3600; i++){
 		if (tab[i]!= NULL){
@@ -256,10 +279,10 @@ int getMinimum( int *tab) {
 }
 
 //to get the average of the temperature
-int getAverage(int *tab) {
-	int ret;
+float getAverage(float *tab) {
+	float ret;
 	int count = 0;
-	int sum = 0;
+	float sum = 0.0;
 	int i;
 	
 	for (i=0;i<3600; i++){
@@ -276,10 +299,122 @@ int getAverage(int *tab) {
 
 
 //to analyse the message with the protocol, not used yet, misunderstood from the first task
-void analyse_msg(char *msg, char *answer) {
+/*void analyse_msg(char *msg, char *answer) {
 	char order = msg[1];
 	int n1, n2, n3, verif;
 
+
+	switch(order) {
+		case 'U':
+			memset(buffer, '\0', sizeof(buffer));
+			memset(missatge, '\0', sizeof(missatge));
+			
+			char val[4];
+			int avg = getAverage(tab);
+			
+			printf("avg = %d\n", avg);
+			sprintf(val, "%d", avg);
+			strcopy(mess, "AU0");
+			strcat(mess, val);
+			strcat(mess, "Z");
+			printf("mess = %s\n", mess);	
+			break;
+		case 'X':
+			char val[4];
+			memset(buffer, '\0', sizeof(buffer));
+			memset(missatge, '\0', sizeof(missatge));
+
+			if (maximum == -9999) {
+				maximum = getMaximum(tab);
+			}
+			strcopy(mess, "AX0");			
+			printf("mini = %d\n", maximum);
+			sprintf(val, "%d", maximum);
+			strcat(mess, val);
+			strcat(mess, "Z");
+			printf("mess = %s\n", mess);
+			break;
+		case 'Y':
+			char val[4];
+			memset(buffer, '\0', sizeof(buffer));
+			memset(missatge, '\0', sizeof(missatge));
+
+			if (minimum == -9999) {
+				minimum = getMinimum(tab);
+			}
+			strcopy(mess, "AY0");			
+			printf("mini = %d\n", minimum);
+			sprintf(val, "%d", minimum);
+			strcat(mess, val);
+			strcat(mess, "Z");
+			printf("mess = %s\n", mess);
+			break;
+		case 'R'
+			//reset maxi et mini//
+			maximum = -9999;
+			minimum = -9999;
+			strcopy(mess, "AR0Z");
+			break;
+		case 'B':
+			char val[4];
+			//counter
+			memset(buffer, '\0', sizeof(buffer));
+			memset(missatge, '\0', sizeof(missatge));
+
+			printf("counter = %d\n", counter);	
+			sprintf(val, "%d", counter);
+			
+			strcopy(mess, "AB0");
+			strcat(mess, val);
+			strcat(mess, "Z");	
+			printf("mess = %s\n", mess);
+			break;
+		case 'M':
+			//start acqui
+			
+			//to get the differents datas from the message
+			char subbuf[10];
+			memcpy(subbuf, &buffer[2], 1);
+			subbuf[2] = '\0';
+			
+			char subbuf2[10];
+			memcpy(subbuf2, &buffer[3], 2);
+			subbuf2[2] = '\0';
+			
+			char subbuf3[10];
+			memcpy(subbuf3, &buffer[5],1);
+			subbuf3[1] = '\0';
+			
+			
+			printf("acquisition = %s\n", acquisition);
+
+			//to start the acquisition of the temperature
+			if (strcmp(subbuf,"1") == 0) {
+				printf("\nAcquisition started witch %s seconds of interval.\n",subbuf2);
+				printf("We calculate median with %s data\n\n. ",subbuf2);
+				strcpy(mess,"AM0Z");
+				strcpy(acquisition,"start");
+				printf("mess = %s\n", mess);
+			}
+			//stop the acquisition of the temperature
+			else {
+				strcpy(mess,"AM0Z");
+				strcpy(acquisition,"stop");
+				printf("mess = %s\n", mess);
+			}
+			printf("acquisition = %s\n", acquisition);
+			break;
+		default:
+			printf("invalid order\n");
+			strcat(answer,"2");
+	}
+	//strcat(answer,"Z");
+
+
+
+
+
+	//test not used
 	switch(order) {
 		case 'S':
 			strcat(answer,"S");
@@ -355,7 +490,7 @@ void analyse_msg(char *msg, char *answer) {
 			strcat(answer,"2");
 	}
 	strcat(answer,"Z");
-}
+}*/
 
 
 
