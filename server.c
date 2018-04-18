@@ -27,7 +27,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <string.h>
+#include <float.h>
+
 
 #define SERVER_PORT_NUM		5001
 #define SERVER_MAX_CONNECTIONS	4
@@ -100,7 +101,8 @@ int main(int argc, char *argv[])
 	counter = 0;
 	for(i=0; i<3600; i++){
 		//tab[i] = (float)rand() / 30.0;
-		tab[i] = ((float) rand()) / (float) 30;		
+		tab[i] = (double)rand() / (double)RAND_MAX*30; //((float) rand()) / (float) 30;
+		printf("%.2f\n",tab[i]);		
 		counter++;
 	}
 	/********* HANDLE THE DATAS **************/
@@ -122,7 +124,7 @@ int main(int argc, char *argv[])
 			memset(missatge, '\0', sizeof(missatge));
 			
 			
-			float avg = getAverage(tab);
+			float avg = getAverage(*tab);
 			
 			printf("avg = %f\n", avg);
 			sprintf(val, "%f", avg);
@@ -265,7 +267,7 @@ float getMaximum(float *tab) {
 }
 
 //function to get the minimum
-float getMinimum( float *tab) {
+float getMinimum(float *tab) {
 	float ret = 9999.0;	
 	int i;
 	for (i=0;i<3600; i++){
@@ -292,7 +294,7 @@ float getAverage(float *tab) {
 		}
 	}
 	ret = sum/count;
-	printf("average = %d\n", ret);
+	printf("average = %f\n", ret);
 	
 	return ret;
 }
