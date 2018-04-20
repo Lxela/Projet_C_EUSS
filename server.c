@@ -74,7 +74,7 @@ float getMinimum(float *tab) {
 }
 
 //to get the average of the temperature
-float getAverage(float tab) {
+float getAverage(float *tab) {
 	float ret;
 	int count = 0;
 	float sum = 0.0;
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 	for(i=0; i<3600; i++){
 		//tab[i] = (float)rand() / 30.0;
 		tab[i] = (double)rand() / (double)RAND_MAX*30; //((float) rand()) / (float) 30;
-		printf("%.2f\n",tab[i]);		
+		//printf("%.2f\n",tab[i]);		
 		counter++;
 	}
 	/********* HANDLE THE DATAS **************/
@@ -170,11 +170,12 @@ int main(int argc, char *argv[])
 			memset(missatge, '\0', sizeof(missatge));
 			
 			
-			float avg = getAverage(*tab);
+			float avg = getAverage(tab);
 			
 			printf("avg = %f\n", avg);
-			sprintf(val, "%f", avg);
+			sprintf(val, "%.2f", avg);
 			strcpy(mess, "AU0");
+			if (avg < 10) strcat(val, "0");
 			strcat(mess, val);
 			strcat(mess, "Z");
 			printf("mess = %s\n", mess);	
@@ -189,7 +190,8 @@ int main(int argc, char *argv[])
 			}
 			strcpy(mess, "AX0");			
 			printf("mini = %f\n", maximum);
-			sprintf(val, "%f", maximum);
+			sprintf(val, "%.2f", maximum);
+			if (maximum < 10) strcat(val, "0");
 			strcat(mess, val);
 			strcat(mess, "Z");
 			printf("mess = %s\n", mess);
@@ -204,7 +206,8 @@ int main(int argc, char *argv[])
 			}
 			strcpy(mess, "AY0");			
 			printf("mini = %f\n", minimum);
-			sprintf(val, "%f", minimum);
+			sprintf(val, "%.2f", minimum);
+			if (minimum < 10) strcat(val, "0");
 			strcat(mess, val);
 			strcat(mess, "Z");
 			printf("mess = %s\n", mess);
