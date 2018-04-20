@@ -45,6 +45,52 @@
 */
 
 
+//function to get the maximum
+float getMaximum(float *tab) {
+	float ret = -9999.0;
+	int i;
+	for (i=0;i<3600; i++){
+		if ( tab[i] != 0 ){
+			if (tab[i] > ret) { 
+				ret = tab[i];
+			}
+		}
+	}
+	return ret;
+}
+
+//function to get the minimum
+float getMinimum(float *tab) {
+	float ret = 9999.0;	
+	int i;
+	for (i=0;i<3600; i++){
+		if (tab[i] != 0){
+			if (tab[i] < ret) {
+				ret = tab[i];
+			}
+		}
+	}
+	return ret;
+}
+
+//to get the average of the temperature
+float getAverage(float tab) {
+	float ret;
+	int count = 0;
+	float sum = 0.0;
+	int i;
+	
+	for (i=0;i<3600; i++){
+		if (tab[i] != 0){
+			sum = sum + tab[i];
+			count++;
+		}
+	}
+	ret = sum/count;
+	printf("average = %f\n", ret);
+	
+	return ret;
+}
 
 int main(int argc, char *argv[])
 {
@@ -205,7 +251,7 @@ int main(int argc, char *argv[])
 			//to start the acquisition of the temperature
 			if (strcmp(subbuf,"1") == 0) {
 				printf("\nAcquisition started witch %s seconds of interval.\n",subbuf2);
-				printf("We calculate median with %s data\n\n. ",subbuf2);
+				printf("We calculate median with %s data\n\n. ",subbuf3);
 				strcpy(mess,"AM0Z");
 				strcpy(acquisition,"start");
 				printf("mess = %s\n", mess);
@@ -252,49 +298,3 @@ acquisition(int *counter) {
 	}
 }
 
-//function to get the maximum
-float getMaximum(float *tab) {
-	float ret = -9999.0;
-	int i;
-	for (i=0;i<3600; i++){
-		if (tab[i]!= NULL){
-			if (tab[i] > ret) { 
-				ret = tab[i];
-			}
-		}
-	}
-	return ret;
-}
-
-//function to get the minimum
-float getMinimum(float *tab) {
-	float ret = 9999.0;	
-	int i;
-	for (i=0;i<3600; i++){
-		if (tab[i]!= NULL){
-			if (tab[i] < ret) {
-				ret = tab[i];
-			}
-		}
-	}
-	return ret;
-}
-
-//to get the average of the temperature
-float getAverage(float *tab) {
-	float ret;
-	int count = 0;
-	float sum = 0.0;
-	int i;
-	
-	for (i=0;i<3600; i++){
-		if (tab[i]!= NULL){
-			sum += tab[i];
-			count++;
-		}
-	}
-	ret = sum/count;
-	printf("average = %f\n", ret);
-	
-	return ret;
-}
