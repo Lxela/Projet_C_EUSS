@@ -97,14 +97,28 @@ void loop() {
   int entry;
   int ret;
   int i = 0;
+  char *ret;
 
-  buffer = Serial.readString();
-  
-  char order = buffer[1];
+  ret = Serial.readString();
+
   if (buffer != NULL) {
     Serial.print("I received something: ");
     Serial.println("message : ");
-    Serial.println(buffer);
+    Serial.println(ret);
+
+
+    char ch = 'A';
+    ret = strchr(ret, ch);
+    int i= 0;	
+    for(i = 0; i < strlen(ret); i++) {
+	if (ret[i] == 'Z') {
+            ret[i+1] = '\0';
+	}
+    }
+    strcat(buffer,ret);
+
+    
+    char order = buffer[1];
 
     switch (order) {
     case 'S':
