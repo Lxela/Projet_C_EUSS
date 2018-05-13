@@ -69,7 +69,7 @@ int	ConfigurarSerie(void)
 	newtio.c_lflag = 0;                                                     
 
 	newtio.c_cc[VTIME]    = 0;   /* inter-character timer unused */         
-	newtio.c_cc[VMIN]     = 4;   /* blocking read until 1 chars received */ 
+	newtio.c_cc[VMIN]     = 1;   /* blocking read until 1 chars received */ 
 
 	tcflush(fd, TCIFLUSH);                                                  
 	tcsetattr(fd,TCSANOW,&newtio);
@@ -96,6 +96,12 @@ int main(int argc, char **argv)
 	char timechar[2];
 	char nbmeasureschar[2];
 	int timetowait;
+	int bytes;
+	int comptador;
+	int min;
+	int max;
+	char subbuf[10];
+
 	
 
 	printf("Enter time : ");
@@ -130,8 +136,46 @@ int main(int argc, char **argv)
 		printf("%c",missatge[i]);
 	}
 	printf("\n");
+	sleep(1);
 
-	res = read(fd,buf,4);
+	i = 0;
+	int trigger = 0;
+	int end = 0;
+	res = 0;
+		printf("avant while 1");
+	ioctl(fd, FIONREAD, &bytes);
+	printf("avant while");
+	printf("bytes : %d",bytes);
+	while(bytes == 0 && end == 0){
+		printf("rentré while ");
+		res = res + read(fd,buf+i,1);
+		//printf("buf %s \n",buf[i]);
+		
+		/*if(buf[i]=='A'|| trigger ==1){
+			printf("rentré if 1");
+			i++;
+			trigger =1;
+			res++;
+			if(buf[i]=='Z'){
+				printf("rentré if 2");
+				i++;
+				buf[i]='\0';
+				end = 1;
+			}		
+		}*/
+	}
+
+	printf("Rebuts %d bytes: ",res);
+	for (i = 0; i <= 4; i++)
+	{
+		printf("%c",buf[i]);
+	}
+
+
+	/*printf("bytes en attente %d",bytes);
+	for (i = 0; i<bytes ;i++){
+		res = res + read(fd,buf+i,1);
+	}
 
 	
 	printf("Rebuts %d bytes: ",res);
@@ -140,22 +184,31 @@ int main(int argc, char **argv)
 		printf("%c",buf[i]);
 	}
 	printf("\n");
-
+*/
 	
-	while(1==1){
+	/*while(1==1){
+
 			sleep(timetowait);
-      		char subbuf[10];
+
       		double media;
       		sprintf(missatge,"ACZ");
 			
-      		fd = ConfigurarSerie();
+      		//fd = ConfigurarSerie();
 			res = write(fd,missatge,strlen(missatge));
 
 			if (res <0) {tcsetattr(fd,TCSANOW,&oldtio); perror(MODEMDEVICE); exit(-1); }
 
 			//fd = ConfigurarSerie();	
-			res = read(fd,buf,4);
-			res = res + read(fd,buf+4,4);
+			//res = read(fd,buf,4);
+			//res = res + read(fd,buf+4,4);
+			res = read(fd,buf,1);
+			res = res + read(fd,buf+1,1);
+			res = res + read(fd,buf+2,1);
+			res = res + read(fd,buf+3,1);
+			res = res + read(fd,buf+4,1);
+			res = res + read(fd,buf+5,1);
+			res = res + read(fd,buf+6,1);
+			res = res + read(fd,buf+7,1);
 			
 
 			printf("Rebuts %d bytes: ",res);
@@ -175,7 +228,8 @@ int main(int argc, char **argv)
       		
 			if (media >=0 && media <=30)
 			{
-			fd = ConfigurarSerie();	
+			comptador++;
+			//fd = ConfigurarSerie();	
 			sprintf(missatge,"AS131Z");
 
 			res = write(fd,missatge,strlen(missatge));
@@ -183,7 +237,13 @@ int main(int argc, char **argv)
 			if (res <0) {tcsetattr(fd,TCSANOW,&oldtio); perror(MODEMDEVICE); exit(-1); }
 	
 			
-			res = read(fd,buf2,4);
+			//res = read(fd,buf2,4);
+			
+			res = read(fd,buf2,1);
+			res = res + read(fd,buf2+1,1);
+			res = res + read(fd,buf2+2,1);
+			res = res + read(fd,buf2+3,1);
+
 			for (i = 0; i < res; i++)
 			{
 				printf("on %c\n", buf2[i]);
@@ -196,7 +256,13 @@ int main(int argc, char **argv)
 			res = write(fd,missatge,strlen(missatge));
 			if (res <0) {tcsetattr(fd,TCSANOW,&oldtio); perror(MODEMDEVICE); exit(-1); }
 			
-			res = read(fd,buf3,4);
+			//res = read(fd,buf3,4);
+			
+			res = read(fd,buf3,1);
+			res = res + read(fd,buf3+1,1);
+			res = res + read(fd,buf3+2,1);
+			res = res + read(fd,buf3+3,1);
+
 			for (i = 0; i < res; i++)
 			{
 				printf("off %c\n", buf3[i]);
@@ -206,17 +272,7 @@ int main(int argc, char **argv)
 			}
 
 
-      	}
-
-
-
-
-
-		
-
-
-
-
+      	}*/
 
                                                                    
 	TancarSerie(fd);
