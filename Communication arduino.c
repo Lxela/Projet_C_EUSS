@@ -280,3 +280,17 @@ int main(int argc, char **argv)
 	return 0;
 }
 
+/*	float min, max;
+	float tabmedia[];
+	const int limit =3600;
+	
+	
+	if(tabmedia[0]= NULL ){min = tabmedia[0]; max = tabmedia[0]}
+	for(int i =0; i < sizeof(tabmedia[]); i++)
+	{
+		if(max > tabmedia[i]){max = tabmedia[i]}
+		if(min < tabmedia[i]){min = tabmedia[i]}
+		}                    	
+	if (sizeof(tabmedia)= limit){tabmedia[0]=tabmedia[limit]}
+
+*/
